@@ -26,14 +26,18 @@ Stack: **foot** (terminal), **rofi** (estilo wofi/drun), **thunar** (arquivos), 
 ## Instalação e uso
 
 1. Copie `hypr4/` para `~/.config/hypr4/`
-2. Dependências: `hyprland`, `foot`, `rofi`, `waybar`, `thunar`, `wlogout`, `grim`, `swaybg`, `wireplumber`, `brightnessctl`
-3. No SDDM, selecione a sessão **hypr4** (ou inicie manualmente):
+2. Copie os configs de shell:
+   - `starship.toml` → `~/.config/starship.toml`
+   - `fastfetch/config.jsonc` → `~/.config/fastfetch/config.jsonc`
+   - `fastfetch/rice.txt` → `~/.config/fastfetch/rice.txt` (logo usado pelo fastfetch)
+3. Dependências: `hyprland`, `foot`, `rofi`, `waybar`, `thunar`, `wlogout`, `grim`, `swaybg`, `wireplumber`, `brightnessctl`, `starship`, `fastfetch`
+4. No SDDM, selecione a sessão **hypr4** (ou inicie manualmente):
 
 ```bash
 Hyprland --config ~/.config/hypr4/hyprland.lua
 ```
 
-4. Após editar configs, recarregue sem relogar:
+5. Após editar configs, recarregue sem relogar:
 
 ```bash
 hyprctl reload
