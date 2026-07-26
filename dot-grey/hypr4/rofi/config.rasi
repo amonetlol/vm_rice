@@ -1,0 +1,102 @@
+/**
+ * hypr4 Jules aesthetic rofi — ported from Jules wofi style (rofi 2.0)
+ */
+configuration {
+    modes: "drun,run,window";
+    show-icons: true;
+    icon-theme: "breeze-dark";
+    terminal: "foot";
+    font: "MesloLGM Nerd Font Mono 11";
+}
+
+* {
+    background:               #1d1f28ee;
+    foreground:               #fdfdfd;
+    normal-background:        transparent;
+    normal-foreground:        #bebec1;
+    selected-normal-background: rgba(255, 255, 255, 0.2);
+    selected-normal-foreground: #5adecd;
+    alternate-normal-background: transparent;
+    alternate-normal-foreground: #bebec1;
+    urgent-background:        transparent;
+    urgent-foreground:        #f37f97;
+    active-background:        transparent;
+    active-foreground:        #5adecd;
+    border-color:             rgba(255, 255, 255, 0.08);
+    separatorcolor:           rgba(255, 255, 255, 0.08);
+}
+
+window {
+    background-color: @background;
+    border:           1px solid;
+    border-color:     @border-color;
+    border-radius:    12px;
+    width:            25%;
+    location:         center;
+    y-offset:         -6px;
+    padding:          0;
+}
+
+mainbox {
+    padding: 0;
+    border:  0;
+}
+
+inputbar {
+    background-color: transparent;
+    text-color:       @foreground;
+    border:           0;
+    border-radius:    8px;
+    padding:          10px;
+    margin:           10px;
+    children:         [ prompt, textbox-prompt-colon, entry ];
+}
+
+entry {
+    text-color: @foreground;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor:     text;
+    spacing:    0;
+}
+
+prompt, textbox-prompt-colon {
+    text-color: @foreground;
+}
+
+listview {
+    padding:      4px 10px 10px;
+    spacing:      4px;
+    scrollbar:    true;
+    fixed-height: 0;
+    border:       0;
+}
+
+element {
+    padding:       8px 12px;
+    border-radius: 8px;
+    cursor:        pointer;
+    spacing:       8px;
+}
+
+element normal.normal {
+    background-color: @normal-background;
+    text-color:       @normal-foreground;
+}
+
+element selected.normal {
+    background-color: @selected-normal-background;
+    text-color:       @selected-normal-foreground;
+    border: 1px solid;
+    border-color: #5adecd;
+}
+
+element-text {
+    background-color: transparent;
+    text-color:       inherit;
+}
+
+element-icon {
+    size: 1.2em;
+}

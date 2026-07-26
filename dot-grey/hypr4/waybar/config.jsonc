@@ -1,0 +1,55 @@
+{
+  "layer": "top",
+  "position": "top",
+  "height": 34,
+  "margin-top": 8,
+  "margin-left": 20,
+  "margin-right": 20,
+  "spacing": 0,
+  "modules-left": ["hyprland/workspaces"],
+  "modules-center": ["clock"],
+  "modules-right": ["pulseaudio", "custom/power"],
+  "custom/day": {
+    "exec": "date +'%a'",
+    "interval": 60,
+    "tooltip": false,
+  },
+  "custom/date": {
+    "exec": "date +'%-m/%-d'",
+    "interval": 60,
+    "tooltip-format": "Click for calendar",
+  },
+  "hyprland/workspaces": {
+    "format": "{id}",
+    "on-click": "activate",
+    "sort-by-number": true,
+    "persistent-workspaces": { "*": 5 },
+  },
+  "clock": {
+    "format": "{:%H:%M}",
+    "interval": 1,
+    "tooltip-format": "<big>{:%A %d %B %Y}</big>",
+  },
+  "pulseaudio": {
+    "format": "{icon}  {volume}%",
+    "format-muted": "󰝟",
+    "format-icons": {
+      "default": ["󰕿", "󰖀", "󰕾"],
+    },
+    "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
+    "on-click-right": "pavucontrol",
+  },
+  "bluetooth": {
+    "format-on": "󰂯",
+    "format-off": "󰂲",
+    "format-disabled": "",
+    "format-connected": "󰂱",
+    "on-click": "rfkill toggle bluetooth",
+    "on-click-right": "blueman-manager",
+  },
+  "custom/power": {
+    "format": "⏻",
+    "tooltip-format": "Power Menu",
+    "on-click": "~/.config/hypr4/scripts/Wlogout.sh",
+  },
+}
