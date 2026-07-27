@@ -7,6 +7,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/lib/common.sh"
 # shellcheck source=lib/snapper.sh
 source "${SCRIPT_DIR}/lib/snapper.sh"
+# shellcheck source=lib/fonts.sh
+source "${SCRIPT_DIR}/lib/fonts.sh"
 
 require_arch
 
@@ -85,6 +87,9 @@ main() {
   run_remote_script "$url"
   done
   run_amonet_modules
+
+  log "=== Custom nerd fonts ==="
+  install_custom_nerd_fonts || warn "Custom nerd font install failed"
 
   log "=== GNOME extensions ==="
   skip_gnome_extensions

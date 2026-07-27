@@ -83,11 +83,14 @@ install_gruvbox_plus_icons() {
 }
 
 install_mcmuse_circle_icons() {
-  local dest
+  local dest color
   dest="$(clone_or_update "${ICON_REPOS[mcmuse_circle]}" McMuse-circle)"
   pushd "$dest" >/dev/null
   chmod +x install.sh
-  ./install.sh -blue -grey -black || ./install.sh -a || warn "McMuse-circle install had issues"
+  # install.sh only keeps the last -color flag; install each variant separately.
+  for color in blue grey black; do
+    ./install.sh "-${color}" || warn "McMuse-circle ${color} install failed"
+  done
   popd >/dev/null
   ok "McMuse-circle icons installed"
 }
@@ -106,11 +109,14 @@ install_hatter_icons() {
 }
 
 install_mcmuse_icons() {
-  local dest
+  local dest color
   dest="$(clone_or_update "${ICON_REPOS[mcmuse]}" McMuse-icon-theme)"
   pushd "$dest" >/dev/null
   chmod +x install.sh
-  ./install.sh -blue -grey -black || ./install.sh -a || warn "McMuse-icon-theme install had issues"
+  # install.sh only keeps the last -color flag; install each variant separately.
+  for color in blue grey black; do
+    ./install.sh "-${color}" || warn "McMuse ${color} install failed"
+  done
   popd >/dev/null
   ok "McMuse-icon-theme installed"
 }
