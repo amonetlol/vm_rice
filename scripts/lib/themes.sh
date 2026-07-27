@@ -61,10 +61,13 @@ install_fausto_theme_family() {
 
   ensure_theme_build_deps
   local themes_dir="${dest}/themes"
-  [[ -x "${themes_dir}/install.sh" ]] || die "install.sh not found in ${themes_dir}"
+  if [[ ! -f "${themes_dir}/install.sh" ]]; then
+    warn "install.sh not found in ${themes_dir}"
+    return 1
+  fi
+  chmod +x "${themes_dir}/install.sh"
 
   pushd "$themes_dir" >/dev/null
-  chmod +x install.sh
 
   for scheme in $schemes; do
   if [[ "$scheme" == "nightfox" ]]; then
@@ -87,11 +90,20 @@ install_fausto_theme_family() {
 install_catppuccin_theme() {
   local dest="$1"
   local schemes="$2"
+
+  if [[ ! -t 0 ]]; then
+    warn "Skipping Catppuccin themes (interactive prompts require a TTY). Run on the VM: ssh -t rice@host 'cd ~/vm_rice/scripts && bash 4.temas.sh'"
+    return 0
+  fi
+
   local themes_dir="${dest}/themes"
-  [[ -x "${themes_dir}/install.sh" ]] || die "Catppuccin install.sh not found"
+  if [[ ! -f "${themes_dir}/install.sh" ]]; then
+    warn "Catppuccin install.sh not found in ${themes_dir}"
+    return 1
+  fi
+  chmod +x "${themes_dir}/install.sh"
 
   pushd "$themes_dir" >/dev/null
-  chmod +x install.sh
 
   local accents=(blue teal sapphire sky)
   for scheme in $schemes; do
@@ -124,7 +136,7 @@ install_juno_theme() {
 install_all_themes() {
   local family
   for family in "${THEME_FAMILIES[@]}"; do
-  install_fausto_theme_family "$family"
+    install_fausto_theme_family "$family" || warn "Theme family failed: ${family}"
   done
 }
 

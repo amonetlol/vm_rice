@@ -116,15 +116,19 @@ install_mcmuse_icons() {
 }
 
 install_bibata_cursor() {
-  if pacman -Qi bibata-cursor-theme &>/dev/null; then
+  if pacman -Qi bibata-cursor-theme-bin &>/dev/null; then
+  ok "bibata-cursor-theme-bin already installed (pacman)"
+  elif pacman -Qi bibata-cursor-theme &>/dev/null; then
   ok "bibata-cursor-theme already installed (pacman)"
+  elif command -v yay &>/dev/null && yay -Qi bibata-cursor-theme-bin &>/dev/null; then
+  ok "bibata-cursor-theme-bin already installed (AUR)"
   elif command -v yay &>/dev/null && yay -Qi bibata-cursor-theme &>/dev/null; then
   ok "bibata-cursor-theme already installed (AUR)"
   elif command -v yay &>/dev/null; then
-  log "Installing bibata-cursor-theme via yay..."
-  yay -S --needed --noconfirm bibata-cursor-theme
+  log "Installing bibata-cursor-theme-bin via yay..."
+  yay -S --needed --noconfirm --answerdiff None --answerclean None bibata-cursor-theme-bin
   else
-  warn "yay not found; install bibata-cursor-theme manually"
+  warn "yay not found; install bibata-cursor-theme-bin manually"
   fi
 }
 

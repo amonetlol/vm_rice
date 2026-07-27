@@ -20,8 +20,8 @@ else
   RED='' GREEN='' YELLOW='' BLUE='' MAGENTA='' CYAN='' BOLD='' RESET=''
 fi
 
-log()   { printf '%s[*]%s %s\n' "$BLUE" "$RESET" "$*"; }
-ok()    { printf '%s[OK]%s %s\n' "$GREEN" "$RESET" "$*"; }
+log()   { printf '%s[*]%s %s\n' "$BLUE" "$RESET" "$*" >&2; }
+ok()    { printf '%s[OK]%s %s\n' "$GREEN" "$RESET" "$*" >&2; }
 warn()  { printf '%s[WARN]%s %s\n' "$YELLOW" "$RESET" "$*" >&2; }
 err()   { printf '%s[ERR]%s %s\n' "$RED" "$RESET" "$*" >&2; }
 die()   { err "$*"; exit 1; }
@@ -82,14 +82,34 @@ clone_or_update() {
   printf '%s' "$dest"
 }
 
+ensure_murrine_engine() {
+  if pacman -Qi gtk-engine-murrine &>/dev/null; then
+    return 0
+  fi
+  if run_as_root pacman -S --needed --noconfirm gtk-engine-murrine &>/dev/null; then
+    return 0
+  fi
+  if command -v yay &>/dev/null; then
+    log "Installing gtk-engine-murrine from AUR (not in official repos)..."
+    if yay -S --needed --noconfirm --answerdiff None --answerclean None gtk-engine-murrine; then
+      return 0
+    fi
+    warn "gtk-engine-murrine AUR build failed — continuing without it"
+    return 0
+  fi
+  warn "gtk-engine-murrine unavailable — legacy GTK2 rendering may be limited"
+  return 0
+}
+
 ensure_theme_build_deps() {
   log "Ensuring GTK theme build dependencies..."
-  run_as_root pacman -S --needed --noconfirm sassc gtk-engine-murrine gnome-themes-extra
+  run_as_root pacman -S --needed --noconfirm sassc gnome-themes-extra
+  ensure_murrine_engine
 }
 
 ensure_icon_build_deps() {
   log "Ensuring icon theme build dependencies..."
-  run_as_root pacman -S --needed --noconfirm gtk-engine-murrine
+  ensure_murrine_engine
 }
 
 rand_pick() {
