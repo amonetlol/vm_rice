@@ -68,6 +68,7 @@ install_fausto_theme_family() {
   chmod +x "${themes_dir}/install.sh"
 
   pushd "$themes_dir" >/dev/null
+  export BATCH_MODE=true
 
   for scheme in $schemes; do
   if [[ "$scheme" == "nightfox" ]]; then
@@ -91,11 +92,6 @@ install_catppuccin_theme() {
   local dest="$1"
   local schemes="$2"
 
-  if [[ ! -t 0 ]]; then
-    warn "Skipping Catppuccin themes (interactive prompts require a TTY). Run on the VM: ssh -t rice@host 'cd ~/vm_rice/scripts && bash 4.temas.sh'"
-    return 0
-  fi
-
   local themes_dir="${dest}/themes"
   if [[ ! -f "${themes_dir}/install.sh" ]]; then
     warn "Catppuccin install.sh not found in ${themes_dir}"
@@ -104,6 +100,7 @@ install_catppuccin_theme() {
   chmod +x "${themes_dir}/install.sh"
 
   pushd "$themes_dir" >/dev/null
+  export BATCH_MODE=true
 
   local accents=(blue teal sapphire sky)
   for scheme in $schemes; do
