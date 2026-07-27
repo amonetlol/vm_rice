@@ -28,7 +28,19 @@ run_remote_script() {
   local name
   name="$(basename "$url")"
   log "Running ${name}..."
-  bash <(curl -fsSL "$url")
+  if [[ "$name" == *ulauncher* ]] && ! command -v ulauncher &>/dev/null; then
+    log "Installing ulauncher..."
+    if pacman -Si ulauncher &>/dev/null; then
+      run_as_root pacman -S --needed --noconfirm ulauncher || warn "ulauncher pacman install failed"
+    elif command -v yay &>/dev/null; then
+      yay -S --needed --noconfirm --answerdiff None --answerclean None ulauncher \
+        || warn "ulauncher AUR install failed"
+    else
+      warn "ulauncher not found — skipping ${name}"
+      return 0
+    fi
+  fi
+  bash <(curl -fsSL "$url") || warn "Remote script ${name} failed (continuing)"
   ok "Finished ${name}"
 }
 
