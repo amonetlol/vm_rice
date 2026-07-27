@@ -45,18 +45,19 @@ declare -A THEME_GTK_NAMES=(
 install_fausto_theme_family() {
   local family="$1"
   local url="${THEME_REPOS[$family]}"
-  local schemes="${THEME_SCHEMES[$family]}"
   local dest
   dest="$(clone_or_update "$url" "${family}-gtk")"
 
   if [[ "$family" == "juno" ]]; then
-  install_juno_theme "$dest"
-  return
+    install_juno_theme "$dest"
+    return
   fi
 
+  local schemes="${THEME_SCHEMES[$family]}"
+
   if [[ "$family" == "catppuccin" ]]; then
-  install_catppuccin_theme "$dest" "$schemes"
-  return
+    install_catppuccin_theme "$dest" "$schemes"
+    return
   fi
 
   ensure_theme_build_deps
