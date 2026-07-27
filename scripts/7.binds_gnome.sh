@@ -21,8 +21,6 @@ TERMINAL_CMD="blackbox-terminal"
 if ! command -v "$TERMINAL_CMD" &>/dev/null; then
   if command -v blackbox &>/dev/null; then
     TERMINAL_CMD="blackbox"
-  elif command -v flatpak &>/dev/null && flatpak info com.raggesilver.BlackBox &>/dev/null; then
-    TERMINAL_CMD="flatpak run com.raggesilver.BlackBox"
   else
     TERMINAL_CMD="gnome-terminal"
   fi
