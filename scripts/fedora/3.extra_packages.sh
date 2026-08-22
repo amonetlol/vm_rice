@@ -23,10 +23,10 @@ log "Installing extra packages via dnf (continues on individual failures)..."
 failed=()
 for pkg in "${EXTRA_PACKAGES[@]}"; do
   log "Installing: ${pkg}"
-  if run_as_root dnf install -y "$pkg"; then
+  if run_as_root dnf install -y "$pkg" 2>/dev/null; then
     ok "Installed ${pkg}"
   else
-    warn "Failed to install: ${pkg}"
+    warn "Failed to install: ${pkg} (repo may be missing — run 1.repos.sh)"
     failed+=("$pkg")
   fi
 done

@@ -86,6 +86,68 @@ dnf_pkg_installed() {
   rpm -q "$pkg" &>/dev/null
 }
 
+# Install dnf packages; bulk first, then per-package retry. Returns 1 only when strict=1 and any fail.
+dnf_install_packages() {
+  local strict="${1:-0}"
+  shift
+  local -a packages=("$@")
+  local pkg failed=()
+
+  log "Installing ${#packages[@]} dnf packages..."
+  if run_as_root dnf install -y "${packages[@]}"; then
+    ok "All dnf packages installed"
+    return 0
+  fi
+
+  warn "Bulk dnf install failed — retrying packages individually..."
+  for pkg in "${packages[@]}"; do
+    if run_as_root dnf install -y "$pkg"; then
+      ok "Installed ${pkg}"
+    else
+      warn "Package not available: ${pkg}"
+      failed+=("$pkg")
+    fi
+  done
+
+  if ((${#failed[@]} > 0)); then
+    warn "Some packages unavailable: ${failed[*]}"
+    [[ "$strict" == "1" ]] && return 1
+  fi
+  return 0
+}
+
+ensure_starship() {
+  if command -v starship &>/dev/null; then
+    ok "starship already installed"
+    return 0
+  fi
+
+  log "Installing starship (not in Fedora repos)..."
+  local bin_dir="${HOME}/.local/bin"
+  mkdir -p "$bin_dir"
+  if curl -fsSL https://starship.rs/install.sh | sh -s -- -y -b "$bin_dir"; then
+    ok "starship installed to ${bin_dir}"
+  else
+    warn "starship install failed — install manually from https://starship.rs"
+    return 1
+  fi
+}
+
+ensure_pipenv() {
+  if command -v pipenv &>/dev/null; then
+    ok "pipenv already available"
+    return 0
+  fi
+
+  log "Installing pipenv via pip (not in Fedora 44 repos)..."
+  if python3 -m pip install --user pipenv; then
+    ok "pipenv installed via pip --user"
+  else
+    warn "pipenv install failed — try: python3 -m pip install --user pipenv"
+    return 1
+  fi
+}
+
 ensure_dnf_config_manager() {
   if dnf config-manager --help &>/dev/null; then
     return 0
@@ -134,9 +196,12 @@ ensure_murrine_engine() {
 
 ensure_theme_build_deps() {
   log "Ensuring GTK theme build dependencies..."
-  # Fedora: sassc + gtk2 theme helpers (no gnome-themes-extra package name)
-  run_as_root dnf install -y sassc gtk2-engines adwaita-gtk2-theme 2>/dev/null \
+  # Fedora: sassc + gtk2-engines; gnome-themes-extra (GTK2 Adwaita) removed from Fedora 44+
+  run_as_root dnf install -y sassc gtk2-engines 2>/dev/null \
     || warn "Some theme build deps missing — install sassc and gtk2-engines manually"
+  if ! run_as_root dnf install -y gnome-themes-extra 2>/dev/null; then
+    warn "gnome-themes-extra/adwaita-gtk2-theme unavailable (GTK2 EOL in Fedora 44+)"
+  fi
   ensure_murrine_engine
 }
 
