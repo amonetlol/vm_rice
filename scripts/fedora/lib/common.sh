@@ -122,13 +122,20 @@ ensure_starship() {
     return 0
   fi
 
-  log "Installing starship (not in Fedora repos)..."
+  log "Installing starship via COPR (atim/starship)..."
+  if run_as_root dnf copr enable -y atim/starship \
+    && run_as_root dnf install -y starship; then
+    ok "starship installed from COPR atim/starship"
+    return 0
+  fi
+
+  warn "COPR install failed; falling back to official install script..."
   local bin_dir="${HOME}/.local/bin"
   mkdir -p "$bin_dir"
   if curl -fsSL https://starship.rs/install.sh | sh -s -- -y -b "$bin_dir"; then
     ok "starship installed to ${bin_dir}"
   else
-    warn "starship install failed — install manually from https://starship.rs"
+    warn "starship install failed — try: dnf copr enable atim/starship && dnf install starship"
     return 1
   fi
 }
