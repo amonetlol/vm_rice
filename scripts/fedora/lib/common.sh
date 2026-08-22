@@ -86,6 +86,43 @@ dnf_pkg_installed() {
   rpm -q "$pkg" &>/dev/null
 }
 
+ensure_dnf_config_manager() {
+  if dnf config-manager --help &>/dev/null; then
+    return 0
+  fi
+  log "Installing DNF config-manager plugin..."
+  run_as_root dnf install -y dnf5-plugins 2>/dev/null \
+    || run_as_root dnf install -y dnf-plugins-core
+}
+
+# Add a .repo file from URL. Supports DNF5, DNF4, and direct download fallback.
+add_dnf_repo_from_url() {
+  local url="$1"
+  local save_name="${2:-$(basename "$url")}"
+
+  [[ "$save_name" == *.repo ]] || save_name="${save_name}.repo"
+  local dest="/etc/yum.repos.d/${save_name}"
+
+  if [[ -f "$dest" ]]; then
+    return 0
+  fi
+
+  ensure_dnf_config_manager
+
+  if run_as_root dnf config-manager addrepo \
+      --from-repofile="$url" --save-filename="$save_name"; then
+    return 0
+  fi
+
+  if run_as_root dnf config-manager --add-repo "$url"; then
+    return 0
+  fi
+
+  require_command curl
+  log "config-manager failed; downloading repo file directly to ${dest}"
+  run_as_root curl -fsSL "$url" -o "$dest"
+}
+
 ensure_murrine_engine() {
   # Fedora: gtk-murrine-engine (Arch: gtk-engine-murrine)
   if dnf_pkg_installed gtk-murrine-engine; then

@@ -31,15 +31,15 @@ enable_brave_repo() {
     return 0
   fi
   log "Adding Brave browser repository..."
-  run_as_root dnf install -y dnf-plugins-core
-  run_as_root dnf config-manager --add-repo \
-    https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
+  add_dnf_repo_from_url \
+    "https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo" \
+    "brave-browser.repo"
   run_as_root rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
   ok "Brave browser repo added"
 }
 
 main() {
-  run_as_root dnf install -y dnf-plugins-core
+  ensure_dnf_config_manager
   enable_rpmfusion
   enable_brave_repo
   ok "Third-party repositories configured"
