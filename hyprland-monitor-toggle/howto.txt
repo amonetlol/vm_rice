@@ -1,5 +1,10 @@
+--sh
 mkdir -p ~/.local/bin
 # cole o script acima em ~/.local/bin/hypr-monitor-toggle.sh
 chmod +x ~/.local/bin/hypr-monitor-toggle.sh
 
+--Hyprland.lua
+hl.monitor({ output = "Virtual-1", mode = "1920x1080@60", position = "0x0", scale = 1 })
+
+--bind
 hl.bind(mod .. " + SHIFT + M", hl.dsp.exec_cmd(os.getenv("HOME") .. "/.local/bin/hypr-monitor-toggle.sh"))  
