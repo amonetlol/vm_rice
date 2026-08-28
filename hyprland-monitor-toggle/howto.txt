@@ -1,0 +1,5 @@
+mkdir -p ~/.local/bin
+# cole o script acima em ~/.local/bin/hypr-monitor-toggle.sh
+chmod +x ~/.local/bin/hypr-monitor-toggle.sh
+
+hl.bind(mod .. " + SHIFT + M", hl.dsp.exec_cmd(os.getenv("HOME") .. "/.local/bin/hypr-monitor-toggle.sh"))  
